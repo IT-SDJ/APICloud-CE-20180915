@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>list_frm</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/acs.css" />
+    <style>
+        html,body {
+            background-color: #f3f5f9
+        }
+        #list {
+            padding-left: 0.2rem;
+            background-color: #FFF;
+        }
+        .cell {
+            height: 0.8rem;
+            box-sizing: border-box;
+        }
+        .ac-thin-bottom::before { /* 根据设计稿要求，重设边框颜色*/
+            border-color: #E2E2E2;
+        }
+        .cell-name {
+            min-width: 0.3rem;
+            margin-right: 0.06rem;
+            font-size: 0.15rem;
+            line-height: 0.8rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .cell-gender-boy {
+            width: 0.15rem;
+            height: 100%;
+            background: url(../image/icon_boy.png) no-repeat center;
+            background-size: 0.15rem 0.15rem;
+        }
+        .cell-gender-girl {
+            width: 0.15rem;
+            height: 100%;
+            background: url(../image/icon_girl.png) no-repeat center;
+            background-size: 0.15rem 0.15rem;
+        }
+        .cell-type {
+            min-width: 0.45rem;
+            margin-right: 0.07rem;
+            font-size: 0.15rem;
+            line-height: 0.8rem;
+            color: #CCC;
+        }
+        .icon-arrow-right {
+            width: 0.08rem;
+            height: 100%;
+            margin-right: 0.18rem;
+            background: url(../image/icon_arrow_right.png) no-repeat left center;
+            background-size: 0.08rem 0.13rem;
+        }
+        .cell.touch .icon-arrow-right {
+            background: url(../image/icon_arrow_right_h.png) no-repeat left center;
+            background-size: 0.08rem 0.13rem;
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="list">
+        <!-- <div class="cell ac ac-thin-bottom" tapmode onclick="touchCell(1)">
+            <span class="cell-name">齐天大圣</span>
+            <span class="cell-gender-boy"></span>
+            <span class="ac-1"></span>
+            <span class="cell-type">战斗型</span>
+            <span class="icon-arrow-right"></span>
+        </div> -->
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/service.js"></script>
+<script type="text/javascript">
+    var eList = $api.byId('list');  // 页面列表元素对象
+    var dataSource = [];  // 列表数据源对象【数组]
+    var index = 0;  // 请求数据的起始索引值
+    var count = 10;  // 单次请求的数据数量
+    apiready = function() {
+        initPage();
+    };
+
+    function initPage() {
+        // 设置下拉刷新
+        $S.addHeaderRefreshMethod(function(){
+            // 刷新，重置数据
+            index = 0;
+            dataSource = [];
+            // 请求数据
+            getListData('refresh');
+        })
+        // 设置上拉加载
+        $S.addScrollToBottomListener(function(){
+            // 设置请求加载的起始值
+            index++;
+            // 请求加载数据
+            getListData('load');
+        });
+        // 初次页面加载，自动请求数据
+        getListData('refresh');
+    }
+
+    // 获取列表数据
+    function getListData(sign) {
+        // 判断是刷新还是加载
+        var params = {
+            index: index,
+            count: count
+        }
+        // 判断是否在屏幕中间显示加载提示信息，主要用于【页面自动刷新/页面第一次加载】时使用
+        $S.GET('result/list',params,function(ret,err){
+            $S.stopHeaderRefresh();
+            if(ret && 1 == ret.status) {
+                // 处理数据，进行页面加载
+                handleListData(ret.body.list,sign);
+            } else {
+                // 交给统一错误处理接口处理错误逻辑
+                return true;
+            }
+        });
+    }
+
+    function handleListData(listData,sign) { // 处理列表数据
+        if(!$S.isArray(listData)) {
+            return;
+        }
+        // 服务端返回空数据数组的处理逻辑
+        if(listData.length == 0) {
+            if('refresh' == sign) { // 刷新页面
+                eList.innerHTML = '';
+            } else { // 加载页面
+                $S.toast('没有更多了...');
+            }
+            return;
+        }
+        // 解析处理list数据
+        var tHTML = '';
+        for(var i=0; i<listData.length; i++) {
+            var item = listData[i];
+            // 获取性别对应样式
+            var genderCls = 'cell-gender-' + (1 == item.gender ? 'boy':'girl');
+            // 获取性格类型对应文字
+            var typeStr = analysisType(item.character.type);
+            // 拼接HTML
+            tHTML += '\
+            <div class="cell ac ac-thin-bottom" tapmode="touch" onclick="touchCell('+i+')">\
+                <span class="cell-name">'+item.nickname+'</span>\
+                <span class="'+genderCls+'"></span>\
+                <span class="ac-1"></span>\
+                <span class="cell-type">'+typeStr+'</span>\
+                <span class="icon-arrow-right"></span>\
+            </div>';
+            dataSource.push(item);
+        }
+        if('refresh' == sign) { // 刷新页面
+            eList.innerHTML = tHTML;
+        } else { // 加载页面
+            $api.append(eList, tHTML);
+        }
+        index = dataSource.length;
+        api.parseTapmode(); // 对追加的页面元素，进行300ms点击延迟消除
+    }
+
+    var types = ['完美型','助人型','成就型','自我型','理智型','疑虑型','活泼型','领袖型','和平型'];
+    function analysisType(typeNum) { // 解析性格，获取对应文字
+        /*
+            说明： 函数analysisType，获取性格类型数字对应的文字，属于补丁方法，此处属于API接口逻辑定义错误
+            正常逻辑应当由服务端API接口返回对应的文字，
+            因为理论上前端是无法获知都有哪些类型，及类型数字代表何种类型详情
+         */
+        if('number' !== typeof typeNum) {
+            return '';
+        }
+        return types[typeNum-1];
+    }
+
+    function touchCell(index) { // 列表单元格点击事件
+        var tItem = dataSource[index]; // 获取单元格对应数据
+        // 打开性格详情页面
+        var tWebUrl = tItem.character.weburl;
+        api.openWin({
+            name: 'result',
+            url: './result.html',
+            pageParam: {  // 传递H5页面打开需要的相关参数
+                weburl: tWebUrl
+            }
+        });
+    }
+</script>
+
+</html>

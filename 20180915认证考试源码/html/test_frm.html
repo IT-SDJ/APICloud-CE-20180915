@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>test_frm</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/acs.css" />
+    <style>
+        html,body {
+            background-color: #F3F5F9;
+        }
+        .container {
+            margin: 0.2rem;
+            background-color: #FFF;
+        }
+        .type {
+            width: 0.32rem;
+            height: 0.16rem;
+            margin: 0.24rem 0.12rem auto 0.15rem;
+            border-radius: 0.03rem;
+            background-color: #1890FF;
+            font-size: 0.10rem;
+            line-height: 0.16rem;
+            text-align: center;
+            color: #fff;
+        }
+        .title {
+            margin: 0.2rem auto;
+            height: 0.25rem;
+            font-size: 0.18rem;
+            line-height: 0.25rem;
+            color: #333;
+            font-weight: bold;
+        }
+        section {
+            margin-top: 0.3rem;
+            padding: 0.2rem;
+        }
+        .radio {
+            width: 100%;
+            margin-bottom: 0.4rem;
+            padding-left: 0.48rem;
+            background: url(../image/icon_radio.png) no-repeat 0.2rem top;
+            background-size: 0.18rem 0.18rem;
+            font-size: 0.16rem;
+            line-height: 0.22rem;
+            color: #333;
+        }
+        .radio.active {
+            background: url(../image/icon_radio_h.png) no-repeat 0.2rem top;
+            background-size: 0.18rem 0.18rem;
+            color: #48C150
+        }
+    </style>
+</head>
+
+<body class="ac">
+    <div class="container ac-1 overflow-hidden">
+        <div class="ac">
+            <div class="type">单选</div>
+            <div id="title" class="title ac-1 line-ellipsis"><!--通常状态下，你是什么状态你?--></div>
+        </div>
+        <section id="items">
+            <!-- <div class="radio ac active" tapmode onclick="selectItem(index)">
+                <div>A.</div><div class="ac-1">很感性；比较感性；偏感性;</div>
+            </div>
+            <div class="radio">
+                <span>A.</span><span>很感性；比较感性；偏感性</span>
+            </div>
+            <div class="radio">
+                <span>A.</span><span>很感性；比较感性；偏感性</span>
+            </div> -->
+        </section>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/service.js"></script>
+<script type="text/javascript">
+    var question;      // 题目数据data
+    var selectedIndex; // 已选择的题目
+    var selectedEl;    // 选择的item元素
+    apiready = function() {
+        // 获取当前页的题目信息
+        question = api.pageParam.question;
+        if(!$S.isJSON(question)) {
+            // 题目数据异常校验
+            $S.alert('题目信息数据异常',api.closeWin);
+        }
+        // 渲染加载页面
+        $api.byId('title').innerHTML = question.title;
+        $api.byId('items').innerHTML = generateItemsHTML();
+
+        api.parseTapmode();  // 对追加的页面元素，进行300ms点击延迟消除
+    };
+
+    // 创建题目选项的HTML
+    function generateItemsHTML() {
+        if(!$S.isArray(question.options)) {
+            return
+        }
+        var items = question.options;
+        var tHTML = '';
+        for(var i = 0; i<items.length; i++) {
+            var item = items[i];
+            tHTML += '\
+            <div class="radio ac" tapmode onclick="selectItem('+i+',this)">\
+                <div>'+item.sign.toUpperCase()+'.</div>\
+                <div class="ac-1">'+item.content+'</div>\
+            </div>';
+        }
+        return tHTML;
+    }
+
+    function selectItem(index,el) {
+        if(index == selectedIndex) { // 校验是否重复选择已选择题目（不存在取消已选择题目的逻辑）
+            return;
+        }
+        if(selectedEl) {
+            // 删除原来的已选择元素样式
+            $api.removeCls(selectedEl, 'active');
+        }
+        $api.addCls(el, 'active');
+        selectedIndex = index; // 缓存当前已选择的item索引值
+        selectedEl = el;       // 缓存当前选择的el元素
+        api.sendEvent({
+            name: 'answerQuestion',
+            extra: {
+                questionIndex: api.pageParam.index,
+                answer: question.options[selectedIndex].sign
+            }
+        });
+    }
+
+
+</script>
+
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>result</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/acs.css" />
+    <style></style>
+</head>
+
+<body>
+    <header>
+        <div class="nav-bar ac-thin-bottom">
+            <div class="nav-bar-item-left" tapmode="touch" onclick="goBack()">
+                <img src="../image/icon_back.png" alt="">
+            </div>
+            <div class="nav-bar-title">测试结果</div>
+        </div>
+    </header>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/service.js"></script>
+<script type="text/javascript">
+    var headerH;
+    apiready = function() {
+        // 全屏沉浸式修复
+        headerH = $api.fixStatusBar($api.dom('header'));
+        // 初始化页面
+        initPage();
+    };
+
+    function goBack() { // 直接返回主页面
+        api.closeToWin({
+            name: 'root'
+        });
+    }
+    function addKeybackListener() { // 监听android的keyback物理键事件
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err){
+            goBack();
+        });
+    }
+
+    function initPage() {
+        // 添加keyback 返回监听
+        addKeybackListener();
+        var params = api.pageParam;
+        // 打开性格详情页(H5)
+        openWebFrame();
+    }
+
+    function openWebFrame() { // 打开H5详情页
+        var tWebUrl = $S.getHost() + api.pageParam.weburl;
+        api.openFrame({
+            name: 'result_frm',
+            url: tWebUrl,
+            rect: { // margin布局
+                marginTop: headerH,
+                w: 'auto',
+                h: 'auto'
+            },
+            progress: {
+                type: 'page'
+            }
+        });
+    }
+
+</script>
+
+</html>

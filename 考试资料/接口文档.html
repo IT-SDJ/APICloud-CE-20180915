@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>20180915APICloud认证考试API接口</title>
+    <meta charset="utf-8" />
+    <style>
+    @charset "UTF-8";
+    html,
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    blockquote {
+        margin: 0;
+        padding: 0;
+        font-weight: normal;
+        -webkit-font-smoothing: antialiased;
+    }
+    /* 设置滚动条的样式 */
+
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    /* 外层轨道 */
+
+    ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset006pxrgba(255, 0, 0, 0.3);
+        background: rgba(0, 0, 0, 0.1);
+    }
+    /* 滚动条滑块 */
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.2);
+        -webkit-box-shadow: inset006pxrgba(0, 0, 0, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb:window-inactive {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+        font-size: 13px;
+        line-height: 25px;
+        color: #393838;
+        position: relative;
+    }
+
+    table {
+        margin: 10px 0 15px 0;
+        border-collapse: collapse;
+    }
+
+    td,
+    th {
+        border: 1px solid #ddd;
+        padding: 3px 10px;
+    }
+
+    th {
+        padding: 5px 10px;
+    }
+
+    a,
+    a:link,
+    a:visited {
+        color: #34495e;
+        text-decoration: none;
+    }
+
+    a:hover,
+    a:focus {
+        color: #59d69d;
+        text-decoration: none;
+    }
+
+    a img {
+        border: none;
+    }
+
+    p {
+        padding-left: 10px;
+        margin-bottom: 9px;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: #404040;
+        line-height: 36px;
+    }
+
+    h1 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 16px;
+        font-size: 32px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #ddd;
+        line-height: 50px;
+    }
+
+    h2 {
+        font-size: 28px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    h3 {
+        clear: both;
+        font-weight: 400;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        border-left: 3px solid #59d69d;
+        padding-left: 8px;
+        font-size: 18px;
+    }
+
+    h4 {
+        font-size: 16px;
+    }
+
+    h5 {
+        font-size: 14px;
+    }
+
+    h6 {
+        font-size: 13px;
+    }
+
+    hr {
+        margin: 0 0 19px;
+        border: 0;
+        border-bottom: 1px solid #ccc;
+    }
+
+    blockquote {
+        padding: 13px 13px 21px 15px;
+        margin-bottom: 18px;
+        font-family: georgia, serif;
+        font-style: italic;
+    }
+
+    blockquote:before {
+        font-size: 40px;
+        margin-left: -10px;
+        font-family: georgia, serif;
+        color: #eee;
+    }
+
+    blockquote p {
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 18px;
+        margin-bottom: 0;
+        font-style: italic;
+    }
+
+    code,
+    pre {
+        font-family: Monaco, Andale Mono, Courier New, monospace;
+    }
+
+    code {
+        background-color: #fee9cc;
+        color: rgba(0, 0, 0, 0.75);
+        padding: 1px 3px;
+        font-size: 12px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+
+    pre {
+        display: block;
+        padding: 14px;
+        margin: 0 0 18px;
+        line-height: 16px;
+        font-size: 11px;
+        border: 1px solid #d9d9d9;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background: #f6f6f6;
+    }
+
+    pre code {
+        background-color: #f6f6f6;
+        color: #737373;
+        font-size: 11px;
+        padding: 0;
+    }
+
+    sup {
+        font-size: 0.83em;
+        vertical-align: super;
+        line-height: 0;
+    }
+
+    * {
+        -webkit-print-color-adjust: exact;
+    }
+
+    @media print {
+        body,
+        code,
+        pre code,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: black;
+        }
+
+        table,
+        pre {
+            page-break-inside: avoid;
+        }
+    }
+
+    html,
+    body {
+        height: 100%;
+    }
+
+    .table-of-contents {
+        position: fixed;
+        top: 61px;
+        left: 0;
+        bottom: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        width: 260px;
+    }
+
+    .table-of-contents>ul>li>a {
+        font-size: 20px;
+        margin-bottom: 16px;
+        margin-top: 16px;
+    }
+
+    .table-of-contents ul {
+        overflow: auto;
+        margin: 0px;
+        height: 100%;
+        padding: 0px 0px;
+        box-sizing: border-box;
+        list-style-type: none;
+    }
+
+    .table-of-contents ul li {
+        padding-left: 20px;
+    }
+
+    .table-of-contents a {
+        padding: 2px 0px;
+        display: block;
+        text-decoration: none;
+    }
+
+    .content-right {
+        max-width: 700px;
+        margin-left: 290px;
+        padding-left: 70px;
+        flex-grow: 1;
+    }
+
+    .content-right h2:target {
+        padding-top: 80px;
+    }
+
+    body>p {
+        margin-left: 30px;
+    }
+
+    body>table {
+        margin-left: 30px;
+    }
+
+    body>pre {
+        margin-left: 30px;
+    }
+
+    .curProject {
+        position: fixed;
+        top: 20px;
+        font-size: 25px;
+        color: black;
+        margin-left: -240px;
+        width: 240px;
+        padding: 5px;
+        line-height: 25px;
+        box-sizing: border-box;
+    }
+
+    .g-doc {
+        margin-top: 56px;
+        padding-top: 24px;
+        display: flex;
+    }
+
+    .curproject-name {
+        font-size: 42px;
+    }
+
+    .m-header {
+        background: #32363a;
+        height: 56px;
+        line-height: 56px;
+        padding-left: 60px;
+        display: flex;
+        align-items: center;
+        position: fixed;
+        z-index: 9;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .m-header .title {
+        font-size: 22px;
+        color: #fff;
+        font-weight: normal;
+        -webkit-font-smoothing: antialiased;
+        margin: 0;
+        margin-left: 16px;
+        padding: 0;
+        line-height: 56px;
+        border: none;
+    }
+
+    .m-header .nav {
+        color: #fff;
+        font-size: 16px;
+        position: absolute;
+        right: 32px;
+        top: 0;
+    }
+
+    .m-header .nav a {
+        color: #fff;
+        margin-left: 16px;
+        padding: 8px;
+        transition: color .2s;
+    }
+
+    .m-header .nav a:hover {
+        color: #59d69d;
+    }
+
+    .m-footer {
+        border-top: 1px solid #ddd;
+        padding-top: 16px;
+        padding-bottom: 16px;
+    }
+    /*# sourceMappingURL=defaultTheme.css.map */
+    </style>
+</head>
+
+<body>
+    <div class="m-header">
+        <a href="#"><h1 class="title">APICloud 接口文档</h1></a>
+        <div class="nav">
+            <a href="https://www.apicloud.com/">APICloud</a>
+        </div>
+    </div>
+    <div class="g-doc">
+        <div class="table-of-contents">
+            <ul>
+                <li><a href="#u516cu5171u5206u7c7b">公共分类</a>
+                    <ul>
+                        <li>
+                            <a href="#u83b7u53d6u9898u76eeu5185u5bb90a3ca20id3du83b7u53d6u9898u76eeu5185u5bb93e203ca3e">获取题目内容
+                            <a id=获取题目内容> </a></a>
+                        </li>
+                        <li>
+                            <a href="#u63d0u4ea4u7b54u98980a3ca20id3du63d0u4ea4u7b54u98983e203ca3e">提交答题<a id=提交答题> </a></a>
+                        </li>
+                        <li>
+                            <a href="#u83b7u53d6u5168u90e8u7b54u9898u7ed3u679cu5217u8868u4fe1u606f0a3ca20id3du83b7u53d6u5168u90e8u7b54u9898u7ed3u679cu5217u8868u4fe1u606f3e203ca3e">获取全部答题结果列表信息
+                            <a id=获取全部答题结果列表信息></a></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div id="right" class="content-right">
+            <h1 class="curproject-name"> 20180915APICloud认证考试API接口 </h1> APICloud认证考试（2018年9月15日）使用的API接口
+            <h2>统一添加headers</h2>
+            <p>"token" : "14052ae98d89b4570b8f8842c17fa971a1b844e7"</p>
+            <h2>服务端根路径地址</h2>
+            <p>https://pwd.apicloud.com</p>
+            <h1 id="u516cu5171u5206u7c7b">公共分类</h1>
+            <p></p>
+            <h2 id="u83b7u53d6u9898u76eeu5185u5bb90a3ca20id3du83b7u53d6u9898u76eeu5185u5bb93e203ca3e">获取题目内容
+<a id=获取题目内容> </a></h2>
+            <p></p>
+            <h3 id="-7">基本信息</h3>
+            <p><strong>Path：</strong> /ks/20180915/questions</p>
+            <p><strong>Method：</strong> GET</p>
+            <p><strong>接口描述：</strong></p>
+            <p>获取答题的全部题目</p>
+            <p>返回的错误信息场景描述：
+                <br> 1. 请求头token验证未通过
+                <br> {
+                <br> &nbsp;&nbsp;&nbsp; error: 10001,
+                <br> &nbsp;&nbsp;&nbsp; msg: '没有访问权限'
+                <br> }
+            </p>
+            <h3 id="-8">请求参数</h3>
+            <p><strong>Headers</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>参数名称</th>
+                        <th>参数值</th>
+                        <th>是否必须</th>
+                        <th>示例</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>token</td>
+                        <td>14052ae98d89b4570b8f8842c17fa971a1b844e7</td>
+                        <td>是</td>
+                        <td></td>
+                        <td>校验的token，写死即可</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 id="-9">返回数据</h3>
+            <table>
+                <thead class="ant-table-thead">
+                    <tr>
+                        <th key=name>名称</th>
+                        <th key=type>类型</th>
+                        <th key=required>是否必须</th>
+                        <th key=default>默认值</th>
+                        <th key=desc>备注</th>
+                        <th key=sub>其他信息</th>
+                    </tr>
+                </thead>
+                <tbody className="ant-table-tbody">
+                    <tr key=0-0>
+                        <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> status</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>1</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1>
+                        <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> body</span>
+                        </td>
+                        <td key=1><span>object</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>响应参数体</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-0>
+                        <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> list</span>
+                        </td>
+                        <td key=1><span>object []</span></td>
+                        <td key=2>非必须</td>
+                        <td key=3></td>
+                        <td key=4><span>列表数组</span></td>
+                        <td key=5>
+                            <p key=3><span style="font-weight: '700'">item 类型: </span><span>object</span></p>
+                        </td>
+                    </tr>
+                    <tr key=0-1-0-0>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> index</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>题目的索引序号</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-0-1>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> title</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>题目标题内容</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-0-2>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> options</span>
+                        </td>
+                        <td key=1><span>object []</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>题目的选择项数组</span></td>
+                        <td key=5>
+                            <p key=3><span style="font-weight: '700'">item 类型: </span><span>object</span></p>
+                        </td>
+                    </tr>
+                    <tr key=0-1-0-2-0>
+                        <td key=0><span style="padding-left: 60px"><span style="color: #8c8a8a">├─</span> sign</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>选项标识符号，如A</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-0-2-1>
+                        <td key=0><span style="padding-left: 60px"><span style="color: #8c8a8a">├─</span> content</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>选项描述内容</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-1>
+                        <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> total</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>响应的返回题目的总数量</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-2>
+                        <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> error</span>
+                        </td>
+                        <td key=1><span>object</span></td>
+                        <td key=2>非必须</td>
+                        <td key=3></td>
+                        <td key=4><span>错误对象，请求错误时返回</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-2-0>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> code</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>错误代码</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-2-1>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> msg</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>错误描述</span></td>
+                        <td key=5></td>
+                    </tr>
+                </tbody>
+            </table>
+            <h2 id="u63d0u4ea4u7b54u98980a3ca20id3du63d0u4ea4u7b54u98983e203ca3e">提交答题
+<a id=提交答题> </a></h2>
+            <p></p>
+            <h3 id="">基本信息</h3>
+            <p><strong>Path：</strong> /ks/20180915/questions/answer</p>
+            <p><strong>Method：</strong> POST</p>
+            <p><strong>接口描述：</strong></p>
+            <p>提交答题接口</p>
+            <p>返回的错误信息场景描述：
+                <br> 1. 请求头token验证未通过
+                <br> {
+                <br> &nbsp;&nbsp;&nbsp; error: 10001,
+                <br> &nbsp;&nbsp;&nbsp; msg: '没有访问权限'
+                <br> }
+            </p>
+            <p>2. 当请求参数格式不正确或者必填参数为空时
+                <br> {
+                <br> &nbsp;&nbsp;&nbsp; error: 10002,
+                <br> &nbsp;&nbsp;&nbsp; msg: '请求参数格式错误'
+                <br> }
+            </p>
+            <h3 id="-2">请求参数</h3>
+            <p><strong>Headers</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>参数名称</th>
+                        <th>参数值</th>
+                        <th>是否必须</th>
+                        <th>示例</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Content-Type</td>
+                        <td>application/json</td>
+                        <td>是</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>token</td>
+                        <td>14052ae98d89b4570b8f8842c17fa971a1b844e7</td>
+                        <td>是</td>
+                        <td></td>
+                        <td>校验token</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><strong>Body</strong></p>
+            <table>
+                <thead class="ant-table-thead">
+                    <tr>
+                        <th key=name>名称</th>
+                        <th key=type>类型</th>
+                        <th key=required>是否必须</th>
+                        <th key=default>默认值</th>
+                        <th key=desc>备注</th>
+                        <th key=sub>其他信息</th>
+                    </tr>
+                </thead>
+                <tbody className="ant-table-tbody">
+                    <tr key=0-0>
+                        <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> appId</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>应用ID,服务端根据appId作为关键索引，相同的appId,新提交的内容会覆盖原来已提交的内容</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1>
+                        <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> nickname</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>昵称</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-2>
+                        <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> gender</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>性别，1男2女</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-3>
+                        <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> answers</span>
+                        </td>
+                        <td key=1><span>string []</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>提交的答题记录</span></td>
+                        <td key=5>
+                            <p key=3><span style="font-weight: '700'">item 类型: </span><span>string</span></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 id="-3">返回数据</h3>
+            <table>
+                <thead class="ant-table-thead">
+                    <tr>
+                        <th key=name>名称</th>
+                        <th key=type>类型</th>
+                        <th key=required>是否必须</th>
+                        <th key=default>默认值</th>
+                        <th key=desc>备注</th>
+                        <th key=sub>其他信息</th>
+                    </tr>
+                </thead>
+                <tbody className="ant-table-tbody">
+                    <tr key=0-0>
+                        <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> status</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>请求的响应结果，1代表成功</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1>
+                        <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> body</span>
+                        </td>
+                        <td key=1><span>object</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>响应的参数体</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-0>
+                        <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> type</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>根据答题内容，反馈的判断性格类型标识，1-9</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-1>
+                        <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> descript</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>性格类型描述，如“完美型”</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-2>
+                        <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> weburl</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>性格详情对应的h5页面url地址</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-3>
+                        <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> error</span>
+                        </td>
+                        <td key=1><span>object</span></td>
+                        <td key=2>非必须</td>
+                        <td key=3></td>
+                        <td key=4><span>错误信息对象，当status=0时返回</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-3-0>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> code</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>错误代码</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-3-1>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> msg</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>错误描述信息</span></td>
+                        <td key=5></td>
+                    </tr>
+                </tbody>
+            </table>
+            <h2 id="u83b7u53d6u5168u90e8u7b54u9898u7ed3u679cu5217u8868u4fe1u606f0a3ca20id3du83b7u53d6u5168u90e8u7b54u9898u7ed3u679cu5217u8868u4fe1u606f3e203ca3e">获取全部答题结果列表信息
+<a id=获取全部答题结果列表信息> </a></h2>
+            <p></p>
+            <h3 id="-4">基本信息</h3>
+            <p><strong>Path：</strong> /ks/20180915/result/list</p>
+            <p><strong>Method：</strong> GET</p>
+            <p><strong>接口描述：</strong></p>
+            <p>获取包含参与答题的所有人员的结果信息列表</p>
+            <p>返回的错误信息场景描述：
+                <br> 1. 请求头token验证未通过
+                <br> {
+                <br> &nbsp;&nbsp;&nbsp; error: 10001,
+                <br> &nbsp;&nbsp;&nbsp; msg: '没有访问权限'
+                <br> }
+                <br> 2. 当请求参数格式不正确或者必填参数为空时
+                <br> {
+                <br> &nbsp;&nbsp;&nbsp; error: 10002,
+                <br> &nbsp;&nbsp;&nbsp; msg: '请求参数格式错误'
+                <br> }
+            </p>
+            <h3 id="-5">请求参数</h3>
+            <p><strong>Headers</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>参数名称</th>
+                        <th>参数值</th>
+                        <th>是否必须</th>
+                        <th>示例</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>token</td>
+                        <td>14052ae98d89b4570b8f8842c17fa971a1b844e7</td>
+                        <td>是</td>
+                        <td></td>
+                        <td>校验token</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><strong>Query</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>参数名称</th>
+                        <th>是否必须</th>
+                        <th>示例</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>index</td>
+                        <td>是</td>
+                        <td>0</td>
+                        <td>请求获取的起始数据序号，其实序号0</td>
+                    </tr>
+                    <tr>
+                        <td>count</td>
+                        <td>是</td>
+                        <td>10</td>
+                        <td>客户端请求服务端一次返回的数据条数</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h3 id="-6">返回数据</h3>
+            <table>
+                <thead class="ant-table-thead">
+                    <tr>
+                        <th key=name>名称</th>
+                        <th key=type>类型</th>
+                        <th key=required>是否必须</th>
+                        <th key=default>默认值</th>
+                        <th key=desc>备注</th>
+                        <th key=sub>其他信息</th>
+                    </tr>
+                </thead>
+                <tbody className="ant-table-tbody">
+                    <tr key=0-0>
+                        <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> status</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>请求的响应状态，1代表请求成功，0代表请求失败</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1>
+                        <td key=0><span style="padding-left: 0px"><span style="color: #8c8a8a"></span> body</span>
+                        </td>
+                        <td key=1><span>object</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>响应参数体</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-0>
+                        <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> list</span>
+                        </td>
+                        <td key=1><span>object []</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>列表数组</span></td>
+                        <td key=5>
+                            <p key=3><span style="font-weight: '700'">item 类型: </span><span>object</span></p>
+                        </td>
+                    </tr>
+                    <tr key=0-1-0-0>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> nickname</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>答题人昵称</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-0-1>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> gender</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>性别，1代表男性2代表女性</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-0-2>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> character</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>性格简称，如“完美”、“助人”、“和平”</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-0-3>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> type</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>性格类型（1-9）</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-0-4>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> weburl</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>个性详情对应的h5页面url地址</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-1>
+                        <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> totalCount</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>必须</td>
+                        <td key=3></td>
+                        <td key=4><span>列表数据总条数</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-2>
+                        <td key=0><span style="padding-left: 20px"><span style="color: #8c8a8a">├─</span> error</span>
+                        </td>
+                        <td key=1><span>object</span></td>
+                        <td key=2>非必须</td>
+                        <td key=3></td>
+                        <td key=4><span>错误对象，当请求错误时返回</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-2-0>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> code</span>
+                        </td>
+                        <td key=1><span>number</span></td>
+                        <td key=2>非必须</td>
+                        <td key=3></td>
+                        <td key=4><span>错误代码</span></td>
+                        <td key=5></td>
+                    </tr>
+                    <tr key=0-1-2-1>
+                        <td key=0><span style="padding-left: 40px"><span style="color: #8c8a8a">├─</span> msg</span>
+                        </td>
+                        <td key=1><span>string</span></td>
+                        <td key=2>非必须</td>
+                        <td key=3></td>
+                        <td key=4><span>错误描述</span></td>
+                        <td key=5></td>
+                    </tr>
+                </tbody>
+            </table>
+            <footer class="m-footer">
+                <p>Build by <a href="https://www.apicloud.com/">APICloud</a>.</p>
+            </footer>
+        </div>
+    </div>
+</body>
+
+</html>

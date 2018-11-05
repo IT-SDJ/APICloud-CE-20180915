@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>home_frm</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/acs.css" />
+    <style>
+        .bg {
+            width: 100%;
+            height: 1.9rem;
+            color: #333;
+        }
+        .body {
+            padding: 0 0.2rem;
+        }
+        .label{
+            height: 0.2rem; /* 设计稿为21px为软件兼容问题，现修正为20px*/
+            margin: 0.2rem 0;
+            font-size: 0.15rem;
+            line-height: 0.2rem;
+            text-align: left;
+        }
+        .label-sign {
+            width: 0.05rem;
+            height: 0.16rem;
+            margin-right: 0.1rem;
+            background-color: #48C150;
+        }
+        .ac-thin-all::before { /* 根据设计稿要求，重设边框颜色*/
+            border-color: #E2E2E2;
+        }
+        .ac-thin-all.border-radius::before {
+            border-radius: 12px; /* 根据设计稿要求，重设边框圆角[注意样式为了实现0.5px,需要输入2倍的设计尺寸]*/
+        }
+        .nickname {
+            width: 100%;
+            height: 0.46rem;
+            padding: 0.13rem 0.2rem;
+        }
+        .nickname span {
+            font-size: 0.15rem;
+            line-height: 0.2rem; /* 设计稿为21px为软件兼容问题，现修正为20px*/
+            margin-right: 0.2rem;
+        }
+        .nickname input {
+            height: 0.2rem;
+            font-size: 0.15rem;
+            line-height: 0.2rem;
+            text-align: right;
+            color: #ccc;
+        }
+        .nickname input::-webkit-input-placeholder { /* placeholder样式  */
+            color: #CCC;
+            font-size: 0.15rem;
+            line-height: 0.2rem;
+            text-align: right;
+        }
+
+        .gender-btn {
+            margin-top: 0.14rem;
+            width: 1.58rem;
+            height: 0.46rem;
+            font-size: 0.14rem;
+            line-height: 0.46rem;
+            text-align: center;
+            color: #919191;
+        }
+        .gender[data-gender-selected="1"]>.ac-thin-all[data-gender="1"]::before,
+        .gender[data-gender-selected="2"]>.ac-thin-all[data-gender="2"]::before {
+            border-color: #48C150;
+        }
+        .gender[data-gender-selected="1"]>.ac-thin-all[data-gender="1"],
+        .gender[data-gender-selected="2"]>.ac-thin-all[data-gender="2"] {
+            color: #48C150;
+        }
+        .begin-btn {
+            margin-top: 0.3rem;
+            width: 3.35rem;
+            height: 0.44rem;
+            background-color: #48C150;
+            font-size: 0.16rem;
+            line-height: 0.44rem;
+            text-align: center;
+            color: #FFF;
+        }
+
+    </style>
+</head>
+
+<body class="ac ac-v">
+    <img class="bg" src="../image/bg_home.png" alt="">
+    <div class="body">
+        <div class="label ac">
+            <span class="label-sign"></span>
+            <span>个人信息</span>
+        </div>
+        <div class="nickname ac ac-thin-all border-radius">
+            <span>昵称</span>
+            <input id="nickname" class="ac-1" type="text" placeholder="输入昵称">
+        </div>
+        <div id="gender" data-gender-selected="1"  class="gender ac">
+            <div data-gender="1" class="gender-btn ac-thin-all border-radius" tapmode onclick="chooseGender(1)">男</div>
+            <div class="ac-1"></div>
+            <div data-gender="2" class="gender-btn ac-thin-all border-radius" tapmode onclick="chooseGender(2)">女</div>
+        </div>
+        <div class="begin-btn" tapmode="touch" onclick="beginTest()">开始测试</div>
+    </div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/service.js"></script>
+<script type="text/javascript">
+    var eNickname = $api.byId('nickname'); // 昵称输入框元素对象
+    var eGender = $api.byId('gender');  // 性别选择容器元素对象
+    var genderValue = 1;  // 性别选择值对象
+    var nicknameValue;    // 昵称值变量
+    apiready = function() {
+
+    };
+
+    // 选择性别按钮点击事件
+    function chooseGender(index) {
+        eGender.dataset.genderSelected = index;
+        genderValue = index;
+    }
+
+    // 开始测试按钮点击事件
+    function beginTest() {
+        nicknameValue = eNickname.value && eNickname.value.trim(); // 去除空格
+        //  判断是否已填写昵称
+        if(!nicknameValue || !nicknameValue.length) {
+            $S.toast('请输入昵称');
+            return
+        }
+        /*默认已设置为男性，故无需再对性别选择做校验*/
+
+        // 跳转到测试页面
+        openTestWin();
+    }
+
+    function openTestWin() { // 打开题目测试页面
+        api.openWin({
+            name: 'test',
+            url: './test.html',
+            pageParam: { // 传递昵称和姓名到测试页面
+                nickname: nicknameValue,
+                gender: genderValue
+            }
+        });
+    }
+
+</script>
+
+</html>

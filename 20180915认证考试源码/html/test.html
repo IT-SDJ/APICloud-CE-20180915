@@ -1,0 +1,284 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>test</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/acs.css" />
+    <style>
+
+        .tool-bar {
+            padding: 0.2rem;
+        }
+        .tool-bar-btn {
+            width: 1.58rem;
+            height: 0.42rem;
+            border-radius: 0.06rem;
+            box-sizing: border-box;
+            background-color: #48C150;
+            font-size: 0.16rem;
+            line-height: 0.4rem;
+            text-align: center;
+            color: #FFF;
+        }
+        .tool-bar-btn.disable {
+            background-color: #E2E2E2;
+        }
+
+    </style>
+</head>
+
+<body class="ac ac-v">
+    <header>
+        <div class="nav-bar">
+            <div class="nav-bar-item-left" tapmode="touch" onclick="goBack()">
+                <img src="../image/icon_back.png" alt="">
+            </div>
+            <div class="nav-bar-title">在线测试</div>
+        </div>
+    </header>
+    <div class="ac-1"></div>
+    <footer>
+        <div class="tool-bar ac">
+            <div id="prev-btn" class="tool-bar-btn disable" tapmode="touch" onclick="prevBtnTouched()">上一题</div>
+            <div class="ac-1"></div>
+            <div id="next-btn" class="tool-bar-btn" tapmode="touch" onclick="nextBtnTouched()">下一题</div>
+        </div>
+    </footer>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/service.js"></script>
+<script type="text/javascript">
+    var headerH,footerH;
+    var currentIndex = 0;      // 当前frame的位置索引变量
+    var ePrevBtn = $api.byId('prev-btn');  // 前一题按钮元素对象
+    var eNextBtn = $api.byId('next-btn');  // 下一题按钮元素对象
+    var questions;  // 测试题数据源对象
+    var answers = [];     // 选择的答案记录
+    apiready = function() {
+        // 全屏沉浸式修复
+        headerH = $api.fixStatusBar($api.dom('header'));
+        footerH = $api.fixTabBar($api.dom('footer'));
+        // 初始化页面
+        initPage();
+    };
+
+    function goBack() { // 关闭返回,封装方法后，方便以后修改内部逻辑
+        api.closeWin();
+    }
+
+    function initPage() {
+        // 添加题目答题监听，方便记录答题内容
+        addAnswerListener();
+        // 请求获取题目数据
+        getTestQuestions();
+    }
+
+    // 打开题目frameGroup页面
+    /*
+        PS:
+        1. 因为本次考试的考题内容只有2道，好多开发者通过直接写死2个静态页面的方式来完成本次考试
+        这样的方式和逻辑是错误的，因为从服务端具体能返回多少道题是不固定的，后端随时可以修改
+        数据内容，所以作为前端开发，我们应该把题目的模版页面写好，然后根据后端的数据来动态加载
+        题目页面
+        2. 本页面逻辑还可以优化，按正常逻辑，一套题的内容基本是不会或很小几率修改的，所以可以将题目数据缓存到本地，然后每次
+        页面加载的时候，优先加载本地的题目数据，再网络请求题目数据，校验是否存在更新，如果存在更新就动态刷新页面
+        3. 如果正式答题项目，可能会有缓存已答题内容的逻辑需求，这时开发者可以将用户答题的内容，时时缓存到本地保存，然后
+        提交成功以后，清空本地的已答题目缓存数据
+     */
+    function openTestFrameGroup() {
+        var frames = getGroupFrames();
+        if(!$S.isArray(frames) || !frames.length) {
+            return;
+        }
+        api.openFrameGroup ({
+            name: 'test_group',
+            background: '#fff',
+            scrollEnabled: true,
+            rect: {
+                 marginTop: headerH,
+                 marginBottom: footerH,
+                 marginLeft: 0,
+                 marginRight: 0
+            },
+            index: currentIndex,
+            frames: frames
+        }, function(ret, err){
+            if(ret){
+                setFrameGroupIndex(ret.index);
+            }
+        });
+    }
+
+    function getGroupFrames() {
+        if(!$S.isArray(questions) || !questions.length) { // 异常判断，题目总数不存在属于逻辑异常
+            return;
+        }
+        // 创建frames
+        var frames = questions.map(function(question,index){
+            return {
+                name: 'test_frm'+index,
+                url: 'test_frm.html',
+                pageParam: {
+                    question: question,
+                    index: index
+                }
+            }
+        });
+        return frames;
+    }
+
+    // 设置切换frameGroup中的frame页面
+    function setFrameGroupIndex(index) {
+        if(currentIndex == index) { // 校验是否是无效操作
+            return;
+        }
+        currentIndex = index;
+        // 校验样式\内容处理
+        handleToolBarBtnStyle();
+        // 切换frameGroup页面
+        api.setFrameGroupIndex({
+            name: 'test_group',
+            index: index,
+            scroll: true
+        });
+    }
+
+    function handleToolBarBtnStyle() {
+        if(!$S.isArray(questions) || !questions.length) { // 异常判断，题目总数不存在属于逻辑异常
+            return;
+        }
+        else if(1 == questions.length) { // 当只有1道题的场景逻辑处理
+            $api.addCls(ePrevBtn, 'disable');
+            eNextBtn.innerHTML = '提交';
+        }
+        else { // 题目总数>=2
+            // 上一题按钮的极限样式判断处理
+            if(0 == currentIndex) {
+                $api.addCls(ePrevBtn, 'disable');
+            } else {
+                $api.removeCls(ePrevBtn, 'disable');
+            }
+            // 下一道题的按钮极限样式判断处理
+            if( questions.length == currentIndex + 1) {
+                eNextBtn.innerHTML = '提交';
+            }
+            else {
+                eNextBtn.innerHTML = '下一题';
+            }
+        }
+    }
+
+    // 答题动作监听
+    function addAnswerListener() {
+        api.addEventListener({
+            name: 'answerQuestion'
+        }, function(ret, err){
+            $S.log('收到答题记录',ret);
+            if(ret && ret.value){
+                answers[ret.value.questionIndex] = ret.value.answer;
+            }
+        });
+    }
+
+    // 获取测试题目信息
+    function getTestQuestions() {
+        // 显示请求等待提示信息
+        $S.showProgress();
+        $S.GET('questions',function(ret,err)  {
+            // 关闭请求等待提示信息
+            $S.hideProgress();
+            // 对服务端返回的数据进行校验处理
+            if(ret && 1 == ret.status) {
+                if(!ret.body.total) {
+                    $S.alert('未获取到题目信息',function(){
+                        api.closeWin();
+                    })
+                } else {
+                    questions = ret.body.list;
+                    if(!$S.isArray(questions) || !questions.length) { // 异常判断，题目总数不存在属于逻辑异常
+                      $S.alert('未获取到题目信息',function(){
+                          api.closeWin();
+                      })
+                      return;
+                    }
+                    // 打开题目的frame页面
+                    openTestFrameGroup();
+                    // 处理底部按钮样式
+                    handleToolBarBtnStyle();
+                }
+            } else {
+                return true; // 调用统一错误处理逻辑
+            }
+        });
+    }
+
+    function prevBtnTouched() { // 上一题按钮点击事件
+        // 判断按钮是否已被禁用
+        if($api.hasCls(ePrevBtn,'disable')) {
+            return;
+        }
+        // 获取上一题的索引序号
+        var tIndex = currentIndex - 1;
+        // 执行切换
+        setFrameGroupIndex(tIndex);
+    }
+    function nextBtnTouched() {
+        // 判断执行“提交”逻辑还是执行“下一题”逻辑
+        if('提交' === eNextBtn.innerHTML) {
+            commitBtnTouched();
+        } else { // 执行下一题逻辑
+            // 获取上一题的索引序号
+            var tIndex = currentIndex + 1;
+            // 执行切换
+            setFrameGroupIndex(tIndex);
+        }
+
+    }
+
+    function commitBtnTouched() { // 提交答题
+        /*
+            本项目为判断性格测试，所以要求答题者所有题目都必须填写选择，
+            故提交答题之前，需要判断所有题目知否都已选择完成
+         */
+        if(answers.length == questions.length) {
+            // 校验通过，提交答题记录
+            requestCommitAnswers();
+        } else {
+            $S.toast('请全部答题完毕后再提交！');
+        }
+    }
+
+    function requestCommitAnswers() {
+        // 显示请求等待提示信息
+        $S.showProgress('提交答题中...');
+        var tParams = {
+            appId: api.appId,
+            nickname: api.pageParam.nickname,
+            gender: api.pageParam.gender.toString(),
+            answers: answers
+        }
+        $S.POST('questions/answer',tParams,function(ret,err)  {
+            // 关闭请求等待提示信息
+            $S.hideProgress();
+            // 对服务端返回的数据进行校验处理
+            if(ret && 1 == ret.status) {
+                // 提交成功，跳转到测试结果详情页
+                api.openWin({
+                    name: 'result',
+                    url: './result.html',
+                    pageParam: ret.body,    // 传递H5页面打开需要的相关参数
+                    slidBackEnabled: false  // 禁用iOS的滑动返回功能，按项目逻辑，进入下个页面后不应再返回本页面
+                });
+            } else {
+                return true; // 调用统一错误处理逻辑
+            }
+        });
+    }
+
+</script>
+
+</html>

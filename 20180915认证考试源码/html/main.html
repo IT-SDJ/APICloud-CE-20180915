@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>main</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <link rel="stylesheet" type="text/css" href="../css/acs.css" />
+    <style>
+        footer {
+            padding: 0 62.5px;
+        }
+        .tab-bar {
+            height: 50px;
+            box-sizing: border-box;
+        }
+        .tab-bar-item{
+            font-size: 11px;
+            line-height: 16px;
+            text-align: center;
+            color: #5A5151;
+        }
+        .tab-bar-item img {
+            display: none;
+            width: 22px;
+            height: 22px;
+            margin: 7px auto 2px;
+        }
+        .tab-bar[data-selected="0"] > .tab-bar-item[data-index="0"] > img[data-status="selected"],
+        .tab-bar[data-selected="1"] > .tab-bar-item[data-index="1"] > img[data-status="selected"],
+        .tab-bar[data-selected="0"] > .tab-bar-item[data-index="1"] > img[data-status="normal"],
+        .tab-bar[data-selected="1"] > .tab-bar-item[data-index="0"] > img[data-status="normal"]{
+            display: block;
+        }
+        .tab-bar[data-selected="0"] > .tab-bar-item[data-index="0"],
+        .tab-bar[data-selected="1"] > .tab-bar-item[data-index="1"]{
+            color: #48C150;
+        }
+
+    </style>
+</head>
+<body class="ac ac-v">
+    <header>
+        <div class="nav-bar ac-thin-bottom"><span class="nav-bar-title">人格测试</span></div>
+    </header>
+    <div class="ac-1"></div>
+    <footer class="ac-thin-top">
+        <div data-selected="0" class="ac tab-bar">
+            <div data-index="0" class="ac-1 tab-bar-item ac ac-v" tapmode onclick="setTabBarSelect(0)">
+                <img data-status="normal" src="../image/icon_tabbar0.png" alt="">
+                <img data-status="selected" src="../image/icon_tabbar0_h.png" alt="">
+                <span style="">测试</span>
+            </div>
+            <div data-index="1" class="ac-1 tab-bar-item ac ac-v" tapmode onclick="setTabBarSelect(1)">
+                <img data-status="normal" src="../image/icon_tabbar1.png" alt="">
+                <img data-status="selected" src="../image/icon_tabbar1_h.png" alt="">
+                <span style="">记录</span>
+            </div>
+        </div>
+    </footer>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+    var eNavBarTitle = $api.dom('header>.nav-bar>.nav-bar-title'); // NavBar标题元素对象
+    var eTabBar = $api.dom('footer>.tab-bar');  // TabBar元素对象
+    var headerH;  // Header元素高度变量
+    var footerH;  // footer元素高度变量
+    var currentIndex = 0; // 默认当前页面索引值
+    apiready = function() {
+        // header底色为白色，故需要将手机状态栏设置为暗色
+        api.setStatusBarStyle({
+            style: 'dark'
+        });
+        initPage(); // 初始化页面
+    };
+
+    // 初始化页面
+    function initPage() {
+        // Header 沉浸式修复
+        headerH = $api.fixStatusBar($api.dom('header'));
+        // Footer 沉浸式修复
+        footerH = $api.fixTabBar($api.dom('footer'));
+        // 打开FrameGroup
+        openMainFrameGroup();
+    }
+
+    function openMainFrameGroup() {
+        api.openFrameGroup ({
+            name: 'main_group',
+            background: '#fff',
+            scrollEnabled: true,
+            rect: {
+                 marginTop: headerH,
+                 marginBottom: footerH,
+                 marginLeft: 0,
+                 marginRight: 0
+            },
+            index: currentIndex,
+            frames: [{
+                name: 'home_frm',
+                url: 'home_frm.html',
+                bgColor: '#fff'
+            },{
+                name: 'list_frm',
+                url: 'list_frm.html',
+                bgColor: '#fff'
+            }]
+        }, function(ret, err) {
+            if(ret) {
+                // frameGroup切换后，回调设置tabBar中item按钮的选中状态
+                setTabBarSelect(ret.index);
+            }
+        });
+    }
+
+    // TabBar item按钮点击事件
+    function setTabBarSelect(index) {
+        if(currentIndex == index) { // 校验是否是重复点击或无效调用
+            return;
+        }
+        currentIndex = index;
+        // 切换TabBar中item选中状态
+        eTabBar.dataset.selected = currentIndex;
+        // 根据index切换header中导航条的内容显示
+        if(1 == currentIndex) {
+            eNavBarTitle.innerHTML = '记录列表';
+        } else {
+            eNavBarTitle.innerHTML = '人格测试';
+        }
+        // 切换frameGroup
+        api.setFrameGroupIndex({
+            name: 'main_group',
+            index: index,
+            scroll: true
+        });
+
+    }
+</script>
+
+</html>
